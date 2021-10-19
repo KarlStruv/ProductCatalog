@@ -52,7 +52,7 @@ class Item
         return $this->quantity;
     }
 
-    public function getCreatedAt()
+    public function getCreatedAt() : string
     {
         return $this->createdAt;
     }

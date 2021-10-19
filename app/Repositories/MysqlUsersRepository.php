@@ -2,10 +2,9 @@
 
 namespace App\Repositories;
 
-
 use App\Models\Collections\UsersCollection;
-use App\Models\Item;
 use App\Models\User;
+use App\Repositories\Interfaces\UsersRepository;
 use PDO;
 use PDOException;
 

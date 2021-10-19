@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Models\User;
 use App\Repositories\MysqlUsersRepository;
-use App\Repositories\UsersRepository;
+use App\Repositories\Interfaces\UsersRepository;
 use Ramsey\Uuid\Uuid;
 
 class UsersController

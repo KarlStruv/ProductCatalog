@@ -2,18 +2,24 @@
 
 namespace App\Controllers;
 
+use App\Models\Collections\ItemsCollection;
 use App\Models\Item;
-use App\Repositories\ItemsRepository;
+use App\Repositories\Interfaces\CategoriesRepository;
+use App\Repositories\Interfaces\ItemsRepository;
+use App\Repositories\MysqlCategoriesRepository;
 use App\Repositories\MysqlItemsRepository;
+use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
 
 class ItemsController{
 
     private ItemsRepository $itemsRepository;
+    private CategoriesRepository $categoriesRepository;
 
     public function __construct()
     {
         $this->itemsRepository = new MysqlItemsRepository();
+        $this->categoriesRepository = new MysqlCategoriesRepository();
     }
 
     public function index()
@@ -25,6 +31,7 @@ class ItemsController{
 
     public function showAddForm()
     {
+        $categories = $this->categoriesRepository->getAll();
         require_once 'App/Views/items/add.template.php';
     }
 
@@ -42,7 +49,7 @@ class ItemsController{
         header("Location: /");
     }
 
-    public function delete()
+    public function delete(array $vars)
     {
         $id = $vars['id'] ?? null;
 
@@ -57,27 +64,37 @@ class ItemsController{
         header('Location: /');
     }
 
-    public function showEditForm()
+    public function showEditForm(array $vars)
     {
+
+        $id = $vars['id'] ?? null;
+
+        $item = $this->itemsRepository->getOne($id);
+
+        $categories = $this->categoriesRepository->getAll();
+
         require_once 'App/Views/items/edit.template.php';
     }
 
-    public function edit()
+    public function edit(array $vars)
     {
         $id = $vars['id'] ?? null;
         if ($id == null) header('Location: /');
 
-        $product = $this->itemsRepository->getOne($id);
+        $item = $this->itemsRepository->getOne($id);
 
-        if ($product !== null) {
-            $this->itemsRepository->edit($product);
+        if ($item !== null){
+            $this->itemsRepository->edit($item);
         }
+
+        header('Location: /items');
     }
 
-    public function search(): Item
+    public function search()
     {
-    //
+        $items = $this->itemsRepository->getAllByCategory($_POST['search']);
 
+        require_once 'App/Views/items/results.template.php';
     }
 
 }

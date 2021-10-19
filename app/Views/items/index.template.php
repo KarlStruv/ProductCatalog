@@ -4,6 +4,18 @@ require_once 'App/Views/partials/header.template.php'
 ?>
 
 <body>
+<form action="/search" method="get">
+    <input type="text" id="search" name="search"></form>
+    <button type="submit">Search</button>
+</form>
+
+<br>
+<br>
+
+<form action="/items/add" method="get">
+    <button type="submit">Add new product</button>
+</form>
+
 
 <h1>All Products</h1>
 
@@ -37,13 +49,10 @@ require_once 'App/Views/partials/header.template.php'
             </form>
         </td>
 
+
     </tr>
     <?php } ?>
 
 </table>
-
-
-
-
 
 </body>
