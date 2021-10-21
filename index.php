@@ -1,7 +1,12 @@
 <?php
+
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+
 require_once 'vendor/autoload.php';
 
 session_start();
+
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
 

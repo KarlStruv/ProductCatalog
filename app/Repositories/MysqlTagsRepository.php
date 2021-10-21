@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Config\MysqlConnection;
 use App\Models\Collections\TagsCollection;
 use App\Models\Tag;
 use App\Repositories\Interfaces\TagsRepository;
@@ -14,14 +15,11 @@ class MysqlTagsRepository implements TagsRepository
 
     public function __construct()
     {
-        $host = '127.0.0.1';
-        $db = 'productsapp';
-        $user = 'karlis';
-        $pass = '1234';
+        $config = MysqlConnection::config();
 
-        $dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
+        $dsn = "mysql:host={$config['host']};dbname={$config['database']};charset=UTF8";
         try {
-            $this->connection = new \PDO($dsn, $user, $pass);
+            $this->connection = new PDO($dsn, $config['user'], $config['password']);
         } catch (PDOException $e) {
             throw new PDOException($e->getMessage(), (int)$e->getCode());
         }
