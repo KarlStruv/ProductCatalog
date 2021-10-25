@@ -21,7 +21,7 @@ class UsersValidation
             throw new InvalidArgumentException('Username already exists');
         }
 
-        if (!strlen($name) > 0)
+        if (empty($name))
         {
             throw new InvalidArgumentException('Enter a username');
         }
@@ -34,7 +34,7 @@ class UsersValidation
             throw new InvalidArgumentException('Email already registered');
         }
 
-        if (!strlen($email) > 0)
+        if (empty($email))
         {
             throw new InvalidArgumentException('Enter an email');
         }

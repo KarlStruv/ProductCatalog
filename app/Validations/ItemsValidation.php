@@ -2,21 +2,21 @@
 
 namespace App\Validations;
 
-use App\Repositories\Interfaces\UsersRepository;
+use App\Repositories\Interfaces\ItemsRepository;
 use InvalidArgumentException;
 
 class ItemsValidation
 {
-    private UsersRepository $userRepository;
+    private ItemsRepository $itemsRepository;
 
-    public function __construct($userRepository)
+    public function __construct($itemsRepository)
     {
-        $this->userRepository = $userRepository;
+        $this->itemsRepository = $itemsRepository;
     }
 
     public function validateProductDetail($itemDetail)
     {
-        if (strlen($itemDetail) < 1)
+        if (empty($itemDetail))
         {
             throw new InvalidArgumentException('Entered details are incorrect');
         }
