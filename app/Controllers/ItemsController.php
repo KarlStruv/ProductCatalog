@@ -8,18 +8,22 @@ use App\Repositories\Interfaces\CategoriesRepository;
 use App\Repositories\Interfaces\ItemsRepository;
 use App\Repositories\MysqlCategoriesRepository;
 use App\Repositories\MysqlItemsRepository;
+use App\Validations\ItemsValidation;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
 
-class ItemsController{
+class ItemsController
+{
 
     private ItemsRepository $itemsRepository;
     private CategoriesRepository $categoriesRepository;
+    private ItemsValidation $itemsValidation;
 
     public function __construct()
     {
         $this->itemsRepository = new MysqlItemsRepository();
         $this->categoriesRepository = new MysqlCategoriesRepository();
+        $this->itemsValidation = new ItemsValidation($this->itemsRepository);
     }
 
     public function index()
@@ -37,16 +41,22 @@ class ItemsController{
 
     public function add()
     {
-        $item = new Item(
-            Uuid::uuid4(),
-            $_POST['name'],
-            $_POST['category'],
-            $_POST['quantity'],
-            $_POST['created_at'],
-        );
-        $this->itemsRepository->save($item);
-
-        header("Location: /");
+        try {
+            $this->itemsValidation->validateProductDetail($_POST['name']);
+            $this->itemsValidation->validateProductDetail($_POST['category']);
+            $this->itemsValidation->validateProductDetail($_POST['quantity']);
+            $this->itemsValidation->validateProductDetail($_POST['created_at']);
+            $this->itemsRepository->save(new Item(
+                Uuid::uuid4(),
+                $_POST['name'],
+                $_POST['category'],
+                $_POST['quantity'],
+                $_POST['created_at'],
+            ));
+            header("Location: /");
+        } catch (\InvalidArgumentException $e) {
+            header('Location: /items/add');
+        }
     }
 
     public function delete(array $vars)
@@ -83,7 +93,7 @@ class ItemsController{
 
         $item = $this->itemsRepository->getOne($id);
 
-        if ($item !== null){
+        if ($item !== null) {
             $this->itemsRepository->edit($item);
         }
 

@@ -1,9 +1,7 @@
 <?php
 namespace App\Middlewares;
 
-class Middleware
+interface Middleware
 {
-    public function authorization(){
-        var_dump('do something');
-    }
+    public function handle(): void;
 }

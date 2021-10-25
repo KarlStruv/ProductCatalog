@@ -5,15 +5,19 @@ namespace App\Controllers;
 use App\Models\User;
 use App\Repositories\MysqlUsersRepository;
 use App\Repositories\Interfaces\UsersRepository;
+use App\Validations\UsersValidation;
+use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
 
 class UsersController
 {
     private UsersRepository $usersRepository;
+    private UsersValidation $usersValidation;
 
     public function __construct()
     {
         $this->usersRepository = new MysqlUsersRepository();
+        $this->usersValidation = new UsersValidation($this->usersRepository);
     }
 
     public function showRegisterForm()
@@ -23,14 +27,22 @@ class UsersController
 
     public function register()
     {
-        $this->usersRepository->save(
-            new User(
-                Uuid::uuid4(),
-                $_POST['name'],
-                $_POST['email'],
-                password_hash($_POST['password'], PASSWORD_DEFAULT)
-            )
-        );
+        try {
+            $this->usersValidation->validateName($_POST['name']);
+            $this->usersValidation->validateEmail($_POST['email']);
+            $this->usersValidation->validatePassword($_POST['password']);
+            $this->usersRepository->save(
+                new User(
+                    Uuid::uuid4(),
+                    $_POST['name'],
+                    $_POST['email'],
+                    password_hash($_POST['password'], PASSWORD_DEFAULT)
+                )
+            );
+        } catch (InvalidArgumentException $e)
+        {
+            header('Location: /register');
+        }
 
         header('Location: /');
     }
